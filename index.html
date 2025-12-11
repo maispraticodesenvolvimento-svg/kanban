@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KB SolPol - Ten Cel Corrêa Jr</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <div class="header-content">
+            <h1>
+                KB SolPol - Ten Cel Corrêa Jr
+            </h1>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <span>📝 A Fazer:</span>
+                    <span class="stat-number" id="stat-todo">0</span>
+                </div>
+                <div class="stat-item">
+                    <span>🔄 Em Andamento:</span>
+                    <span class="stat-number" id="stat-progress">0</span>
+                </div>
+                <div class="stat-item">
+                    <span>✅ Concluído:</span>
+                    <span class="stat-number" id="stat-done">0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="kanban-container">
+        <div class="kanban-board">
+            <!-- Coluna: A Fazer -->
+            <div class="kanban-column column-todo active">
+                <div class="column-header">
+                    <div class="column-title">
+                        📝 A Fazer
+                        <span class="column-badge" data-count="todo">0</span>
+                    </div>
+                </div>
+                <div class="task-list" data-column="todo"></div>
+                <button class="add-task-btn" data-column="todo">
+                    <span>+</span>
+                    Adicionar Tarefa
+                </button>
+            </div>
+
+            <!-- Coluna: Em Andamento -->
+            <div class="kanban-column column-progress">
+                <div class="column-header">
+                    <div class="column-title">
+                        🔄 Em Andamento
+                        <span class="column-badge" data-count="progress">0</span>
+                    </div>
+                </div>
+                <div class="task-list" data-column="progress"></div>
+                <button class="add-task-btn" data-column="progress">
+                    <span>+</span>
+                    Adicionar Tarefa
+                </button>
+            </div>
+
+            <!-- Coluna: Concluído -->
+            <div class="kanban-column column-done">
+                <div class="column-header">
+                    <div class="column-title">
+                        ✅ Concluído
+                        <span class="column-badge" data-count="done">0</span>
+                    </div>
+                </div>
+                <div class="task-list" data-column="done"></div>
+                <button class="add-task-btn" data-column="done">
+                    <span>+</span>
+                    Adicionar Tarefa
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal para Adicionar/Editar Tarefa -->
+    <div class="modal" id="taskModal">
+        <div class="modal-content">
+            <h2 class="modal-header" id="modalTitle">Nova Tarefa</h2>
+            <form id="taskForm">
+                <div class="form-group">
+                    <label class="form-label" for="taskTitle">Título da Tarefa</label>
+                    <input type="text" id="taskTitle" class="form-input" placeholder="Digite o título da tarefa..."
+                        required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="taskDescription">Descrição (opcional)</label>
+                    <textarea id="taskDescription" class="form-input"
+                        placeholder="Adicione detalhes sobre a tarefa..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="taskPriority">Prioridade</label>
+                    <select id="taskPriority" class="form-input">
+                        <option value="low">🟢 Baixa</option>
+                        <option value="medium">🟡 Média</option>
+                        <option value="high">🔴 Alta</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelBtn">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar Tarefa</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <nav class="mobile-nav">
+        <button class="nav-btn active" data-target="todo">
+            <span class="nav-icon">📝</span>
+            <span>A Fazer</span>
+        </button>
+        <button class="nav-btn" data-target="progress">
+            <span class="nav-icon">🔄</span>
+            <span>Em Andamento</span>
+        </button>
+        <button class="nav-btn" data-target="done">
+            <span class="nav-icon">✅</span>
+            <span>Concluído</span>
+        </button>
+    </nav>
+
+    <!-- Firebase SDK (Versão Compat para compatibilidade com HTML puro) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
+    <!-- Script principal -->
+    <script src="script.js"></script>
+</body>
+
+</html>

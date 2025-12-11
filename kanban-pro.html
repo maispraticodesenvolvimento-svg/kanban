@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanban Board Pro - Gerenciador de Tarefas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border-color: #475569;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.5);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-md);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 2rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-number {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 1.125rem;
+        }
+
+        /* Kanban Board */
+        .kanban-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem 2rem;
+        }
+
+        .kanban-board {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Column Styles */
+        .kanban-column {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            min-height: 500px;
+            transition: all 0.3s ease;
+        }
+
+        .kanban-column:hover {
+            border-color: var(--accent-blue);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .column-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .column-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .column-badge {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--accent-blue);
+            padding: 0.25rem 0.625rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            min-width: 1.5rem;
+            text-align: center;
+        }
+
+        .column-todo .column-badge { background: rgba(148, 163, 184, 0.2); color: var(--text-secondary); }
+        .column-progress .column-badge { background: rgba(139, 92, 246, 0.2); color: var(--accent-purple); }
+        .column-done .column-badge { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
+
+        /* Task List */
+        .task-list {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+            min-height: 100px;
+        }
+
+        .task-list.drag-over {
+            background: rgba(59, 130, 246, 0.1);
+            border: 2px dashed var(--accent-blue);
+            border-radius: 8px;
+        }
+
+        .task-list:empty::before {
+            content: "Arraste tarefas para cá";
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            opacity: 0.5;
+        }
+
+        /* Task Card */
+        .task-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            cursor: grab;
+            transition: all 0.2s ease;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .task-card:hover {
+            border-color: var(--accent-blue);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .task-card.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+            border-color: var(--accent-blue);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .task-title {
+            flex: 1;
+            font-weight: 500;
+            color: var(--text-primary);
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .task-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+            width: 1.75rem;
+            height: 1.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .task-btn:hover {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--accent-blue);
+        }
+
+        .task-btn.delete:hover {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .task-meta {
+            display: flex;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .task-time {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        /* Add Task Button */
+        .add-task-btn {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            color: white;
+            border: none;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            margin-top: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .add-task-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .add-task-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: var(--shadow-xl);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        textarea.form-input {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border-color);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>
+                <span>📋</span>
+                Kanban Board Pro
+            </h1>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <span>📝 A Fazer:</span>
+                    <span class="stat-number" id="stat-todo">0</span>
+                </div>
+                <div class="stat-item">
+                    <span>🔄 Em Andamento:</span>
+                    <span class="stat-number" id="stat-progress">0</span>
+                </div>
+                <div class="stat-item">
+                    <span>✅ Concluído:</span>
+                    <span class="stat-number" id="stat-done">0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="kanban-container">
+        <div class="kanban-board">
+            <!-- Coluna: A Fazer -->
+            <div class="kanban-column column-todo">
+                <div class="column-header">
+                    <div class="column-title">
+                        📝 A Fazer
+                        <span class="column-badge" data-count="todo">0</span>
+                    </div>
+                </div>
+                <div class="task-list" data-column="todo"></div>
+                <button class="add-task-btn" data-column="todo">
+                    <span>+</span>
+                    Adicionar Tarefa
+                </button>
+            </div>
+
+            <!-- Coluna: Em Andamento -->
+            <div class="kanban-column column-progress">
+                <div class="column-header">
+                    <div class="column-title">
+                        🔄 Em Andamento
+                        <span class="column-badge" data-count="progress">0</span>
+                    </div>
+                </div>
+                <div class="task-list" data-column="progress"></div>
+                <button class="add-task-btn" data-column="progress">
+                    <span>+</span>
+                    Adicionar Tarefa
+                </button>
+            </div>
+
+            <!-- Coluna: Concluído -->
+            <div class="kanban-column column-done">
+                <div class="column-header">
+                    <div class="column-title">
+                        ✅ Concluído
+                        <span class="column-badge" data-count="done">0</span>
+                    </div>
+                </div>
+                <div class="task-list" data-column="done"></div>
+                <button class="add-task-btn" data-column="done">
+                    <span>+</span>
+                    Adicionar Tarefa
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal para Adicionar/Editar Tarefa -->
+    <div class="modal" id="taskModal">
+        <div class="modal-content">
+            <h2 class="modal-header" id="modalTitle">Nova Tarefa</h2>
+            <form id="taskForm">
+                <div class="form-group">
+                    <label class="form-label" for="taskTitle">Título da Tarefa</label>
+                    <input type="text" id="taskTitle" class="form-input" placeholder="Digite o título da tarefa..." required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="taskDescription">Descrição (opcional)</label>
+                    <textarea id="taskDescription" class="form-input" placeholder="Adicione detalhes sobre a tarefa..."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelBtn">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar Tarefa</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Estado da aplicação
+        const state = {
+            tasks: {
+                todo: [],
+                progress: [],
+                done: []
+            },
+            currentColumn: null,
+            editingTask: null
+        };
+
+        // Elementos DOM
+        const modal = document.getElementById('taskModal');
+        const taskForm = document.getElementById('taskForm');
+        const taskTitleInput = document.getElementById('taskTitle');
+        const taskDescriptionInput = document.getElementById('taskDescription');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const modalTitle = document.getElementById('modalTitle');
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTasks();
+            setupEventListeners();
+            renderAllTasks();
+        });
+
+        // Configurar Event Listeners
+        function setupEventListeners() {
+            // Botões de adicionar tarefa
+            document.querySelectorAll('.add-task-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    state.currentColumn = btn.dataset.column;
+                    state.editingTask = null;
+                    openModal();
+                });
+            });
+
+            // Modal
+            taskForm.addEventListener('submit', handleTaskSubmit);
+            cancelBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closeModal();
+            });
+
+            // Drag and Drop nas listas
+            document.querySelectorAll('.task-list').forEach(list => {
+                list.addEventListener('dragover', handleDragOver);
+                list.addEventListener('drop', handleDrop);
+                list.addEventListener('dragleave', handleDragLeave);
+            });
+        }
+
+        // Gerenciamento de Tarefas
+        function createTask(title, description, column) {
+            return {
+                id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+                title: title.trim(),
+                description: description.trim(),
+                column: column,
+                createdAt: new Date().toISOString()
+            };
+        }
+
+        function addTask(task) {
+            state.tasks[task.column].push(task);
+            saveTasks();
+            renderAllTasks();
+        }
+
+        function editTask(taskId, updates) {
+            for (let column in state.tasks) {
+                const taskIndex = state.tasks[column].findIndex(t => t.id === taskId);
+                if (taskIndex !== -1) {
+                    state.tasks[column][taskIndex] = { ...state.tasks[column][taskIndex], ...updates };
+                    saveTasks();
+                    renderAllTasks();
+                    return;
+                }
+            }
+        }
+
+        function deleteTask(taskId) {
+            for (let column in state.tasks) {
+                const taskIndex = state.tasks[column].findIndex(t => t.id === taskId);
+                if (taskIndex !== -1) {
+                    state.tasks[column].splice(taskIndex, 1);
+                    saveTasks();
+                    renderAllTasks();
+                    return;
+                }
+            }
+        }
+
+        function moveTask(taskId, fromColumn, toColumn) {
+            const taskIndex = state.tasks[fromColumn].findIndex(t => t.id === taskId);
+            if (taskIndex !== -1) {
+                const task = state.tasks[fromColumn].splice(taskIndex, 1)[0];
+                task.column = toColumn;
+                state.tasks[toColumn].push(task);
+                saveTasks();
+                renderAllTasks();
+            }
+        }
+
+        // Renderização
+        function renderAllTasks() {
+            ['todo', 'progress', 'done'].forEach(column => {
+                renderTasks(column);
+                updateColumnCount(column);
+            });
+            updateStats();
+        }
+
+        function renderTasks(column) {
+            const taskList = document.querySelector(`.task-list[data-column="${column}"]`);
+            taskList.innerHTML = '';
+
+            state.tasks[column].forEach(task => {
+                const taskCard = createTaskCard(task);
+                taskList.appendChild(taskCard);
+            });
+        }
+
+        function createTaskCard(task) {
+            const card = document.createElement('div');
+            card.className = 'task-card';
+            card.draggable = true;
+            card.dataset.taskId = task.id;
+            card.dataset.column = task.column;
+
+            const timeAgo = getTimeAgo(task.createdAt);
+
+            card.innerHTML = `
+                <div class="task-header">
+                    <div class="task-title">${escapeHtml(task.title)}</div>
+                    <div class="task-actions">
+                        <button class="task-btn edit" onclick="handleEditTask('${task.id}')" title="Editar">✏️</button>
+                        <button class="task-btn delete" onclick="handleDeleteTask('${task.id}')" title="Excluir">🗑️</button>
+                    </div>
+                </div>
+                ${task.description ? `<div class="task-description" style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.5rem;">${escapeHtml(task.description)}</div>` : ''}
+                <div class="task-meta">
+                    <div class="task-time">
+                        <span>🕐</span>
+                        <span>${timeAgo}</span>
+                    </div>
+                </div>
+            `;
+
+            // Drag events
+            card.addEventListener('dragstart', handleDragStart);
+            card.addEventListener('dragend', handleDragEnd);
+
+            return card;
+        }
+
+        function updateColumnCount(column) {
+            const badge = document.querySelector(`[data-count="${column}"]`);
+            if (badge) {
+                badge.textContent = state.tasks[column].length;
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('stat-todo').textContent = state.tasks.todo.length;
+            document.getElementById('stat-progress').textContent = state.tasks.progress.length;
+            document.getElementById('stat-done').textContent = state.tasks.done.length;
+        }
+
+        // Modal
+        function openModal() {
+            if (state.editingTask) {
+                modalTitle.textContent = 'Editar Tarefa';
+                taskTitleInput.value = state.editingTask.title;
+                taskDescriptionInput.value = state.editingTask.description || '';
+            } else {
+                modalTitle.textContent = 'Nova Tarefa';
+                taskForm.reset();
+            }
+            modal.classList.add('active');
+            taskTitleInput.focus();
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+            taskForm.reset();
+            state.editingTask = null;
+        }
+
+        function handleTaskSubmit(e) {
+            e.preventDefault();
+            const title = taskTitleInput.value;
+            const description = taskDescriptionInput.value;
+
+            if (state.editingTask) {
+                editTask(state.editingTask.id, { title, description });
+            } else {
+                const task = createTask(title, description, state.currentColumn);
+                addTask(task);
+            }
+
+            closeModal();
+        }
+
+        // Drag and Drop
+        let draggedElement = null;
+
+        function handleDragStart(e) {
+            draggedElement = e.currentTarget;
+            e.currentTarget.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(e) {
+            e.currentTarget.classList.remove('dragging');
+            document.querySelectorAll('.task-list').forEach(list => {
+                list.classList.remove('drag-over');
+            });
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('drag-over');
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function handleDragLeave(e) {
+            if (e.currentTarget === e.target) {
+                e.currentTarget.classList.remove('drag-over');
+            }
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const dropZone = e.currentTarget;
+            dropZone.classList.remove('drag-over');
+
+            if (draggedElement) {
+                const taskId = draggedElement.dataset.taskId;
+                const fromColumn = draggedElement.dataset.column;
+                const toColumn = dropZone.dataset.column;
+
+                if (fromColumn !== toColumn) {
+                    moveTask(taskId, fromColumn, toColumn);
+                }
+            }
+        }
+
+        // Handlers de ações
+        function handleEditTask(taskId) {
+            for (let column in state.tasks) {
+                const task = state.tasks[column].find(t => t.id === taskId);
+                if (task) {
+                    state.editingTask = task;
+                    state.currentColumn = column;
+                    openModal();
+                    return;
+                }
+            }
+        }
+
+        function handleDeleteTask(taskId) {
+            if (confirm('Tem certeza que deseja excluir esta tarefa?')) {
+                deleteTask(taskId);
+            }
+        }
+
+        // LocalStorage
+        function saveTasks() {
+            localStorage.setItem('kanban-tasks', JSON.stringify(state.tasks));
+        }
+
+        function loadTasks() {
+            const saved = localStorage.getItem('kanban-tasks');
+            if (saved) {
+                try {
+                    state.tasks = JSON.parse(saved);
+                } catch (e) {
+                    console.error('Erro ao carregar tarefas:', e);
+                }
+            }
+        }
+
+        // Utilitários
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function getTimeAgo(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const seconds = Math.floor((now - date) / 1000);
+
+            if (seconds < 60) return 'agora';
+            if (seconds < 3600) return `${Math.floor(seconds / 60)}m atrás`;
+            if (seconds < 86400) return `${Math.floor(seconds / 3600)}h atrás`;
+            return `${Math.floor(seconds / 86400)}d atrás`;
+        }
+
+        // Atalhos de teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.classList.contains('active')) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
