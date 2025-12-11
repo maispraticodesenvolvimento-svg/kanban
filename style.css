@@ -718,6 +718,31 @@ textarea.form-input {
         /* Garante que a lista de tarefas tenha scroll adequado */
         padding-bottom: 2rem;
     }
+
+    /* Floating Action Button (FAB) for Add Task on Mobile */
+    .add-task-btn {
+        position: fixed;
+        bottom: 3rem;
+        right: 2rem;
+        width: 3.5rem;
+        height: 3.5rem;
+        border-radius: 50%;
+        padding: 0;
+        margin: 0;
+        font-size: 0;
+        /* Hide text */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: var(--shadow-lg);
+        z-index: 100;
+        gap: 0;
+    }
+
+    .add-task-btn span {
+        font-size: 1.5rem;
+        margin-right: 0;
+    }
 }
 
 /* Custom Scrollbar */
