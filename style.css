@@ -42,6 +42,7 @@ header {
     /* Não encolhe */
     z-index: 100;
     box-shadow: var(--shadow-md);
+    display: none;
 }
 
 .header-content {
