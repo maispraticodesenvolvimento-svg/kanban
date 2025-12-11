@@ -32,14 +32,20 @@
         </div>
     </header>
 
+    <!-- Global Toggle Removed via script/css logic or just commented out. Replacing content of columns appropriately -->
+
     <main class="kanban-container">
         <div class="kanban-board">
             <!-- Coluna: A Fazer -->
             <div class="kanban-column column-todo active">
                 <div class="column-header">
-                    <div class="column-title">
-                        📝 A Fazer
-                        <span class="column-badge" data-count="todo">0</span>
+                    <div class="header-row"
+                        style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                        <div class="column-title">
+                            📝 A Fazer
+                            <span class="column-badge" data-count="todo">0</span>
+                        </div>
+                        <button class="menu-toggle-btn">☰</button>
                     </div>
                 </div>
                 <div class="task-list" data-column="todo"></div>
@@ -52,9 +58,13 @@
             <!-- Coluna: Em Andamento -->
             <div class="kanban-column column-progress">
                 <div class="column-header">
-                    <div class="column-title">
-                        🔄 Em Andamento
-                        <span class="column-badge" data-count="progress">0</span>
+                    <div class="header-row"
+                        style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                        <div class="column-title">
+                            🔄 Em Andamento
+                            <span class="column-badge" data-count="progress">0</span>
+                        </div>
+                        <button class="menu-toggle-btn">☰</button>
                     </div>
                 </div>
                 <div class="task-list" data-column="progress"></div>
@@ -67,9 +77,13 @@
             <!-- Coluna: Concluído -->
             <div class="kanban-column column-done">
                 <div class="column-header">
-                    <div class="column-title">
-                        ✅ Concluído
-                        <span class="column-badge" data-count="done">0</span>
+                    <div class="header-row"
+                        style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                        <div class="column-title">
+                            ✅ Concluído
+                            <span class="column-badge" data-count="done">0</span>
+                        </div>
+                        <button class="menu-toggle-btn">☰</button>
                     </div>
                 </div>
                 <div class="task-list" data-column="done"></div>
@@ -113,20 +127,42 @@
     </div>
 
     <!-- Mobile Navigation -->
-    <nav class="mobile-nav">
-        <button class="nav-btn active" data-target="todo">
-            <span class="nav-icon">📝</span>
-            <span>A Fazer</span>
-        </button>
-        <button class="nav-btn" data-target="progress">
-            <span class="nav-icon">🔄</span>
-            <span>Em Andamento</span>
-        </button>
-        <button class="nav-btn" data-target="done">
-            <span class="nav-icon">✅</span>
-            <span>Concluído</span>
-        </button>
-    </nav>
+    <!-- Mobile Menu Toggle (Global removed) -->
+
+    <!-- Side Menu Overlay -->
+    <div class="menu-overlay" id="menuOverlay"></div>
+
+    <!-- Side Menu -->
+    <aside class="side-menu" id="sideMenu">
+        <div class="side-menu-header">
+            <h2>KB SolPol</h2>
+            <div class="side-menu-stats">
+                <div class="stat-item">
+                    <span>📝 A Fazer:</span>
+                    <span class="stat-number" id="stat-todo-mobile">0</span>
+                </div>
+                <div class="stat-item">
+                    <span>🔄 Em Andamento:</span>
+                    <span class="stat-number" id="stat-progress-mobile">0</span>
+                </div>
+                <div class="stat-item">
+                    <span>✅ Concluído:</span>
+                    <span class="stat-number" id="stat-done-mobile">0</span>
+                </div>
+            </div>
+        </div>
+        <nav class="side-menu-nav">
+            <button class="side-nav-btn active" data-target="todo">
+                <span class="nav-icon">�</span> A Fazer
+            </button>
+            <button class="side-nav-btn" data-target="progress">
+                <span class="nav-icon">🔄</span> Em Andamento
+            </button>
+            <button class="side-nav-btn" data-target="done">
+                <span class="nav-icon">✅</span> Concluído
+            </button>
+        </nav>
+    </aside>
 
     <!-- Firebase SDK (Versão Compat para compatibilidade com HTML puro) -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>

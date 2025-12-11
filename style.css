@@ -508,108 +508,215 @@ textarea.form-input {
     background: var(--border-color);
 }
 
-/* Mobile Nav Hidden by Default */
-.mobile-nav {
+/* Mobile Menu Elements - Hidden on Desktop */
+.menu-toggle-btn,
+.menu-overlay,
+.side-menu {
     display: none;
+    /* !Important para garantir que não apareça no desktop acidentalmente */
 }
 
-/* Responsive Design - Mobile Tabs */
+/* Responsive Design - Mobile Side Menu */
 @media (max-width: 768px) {
-    .header-content {
-        flex-direction: column;
-        gap: 1rem;
+    header {
+        display: none;
+        /* Esconde header desktop */
     }
 
+    .header-content,
     .header-stats {
         display: none;
-        /* Simplificar header no mobile */
     }
 
-    /* Ajuste para ocupar altura total no mobile */
+    /* Toggle Button - Agora dentro do header */
+    .menu-toggle-btn {
+        display: flex;
+        position: static;
+        z-index: 10;
+        background: transparent;
+        backdrop-filter: none;
+        border: none;
+        color: var(--text-primary);
+        padding: 0.5rem;
+        border-radius: 8px;
+        font-size: 1.5rem;
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+        width: auto;
+        height: auto;
+        box-shadow: none;
+        margin-left: auto;
+    }
+
+    .menu-toggle-btn:active {
+        transform: scale(0.95);
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Overlay */
+    .menu-overlay {
+        display: block;
+        /* Controlado via opacity e visibility pelo JS para animar */
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(3px);
+        z-index: 1150;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .menu-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    /* Side Menu Container */
+    .side-menu {
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 85%;
+        max-width: 300px;
+        height: 100%;
+        background: var(--bg-secondary);
+        z-index: 1200;
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: var(--shadow-xl);
+        border-right: 1px solid var(--border-color);
+    }
+
+    .side-menu.active {
+        display: flex;
+        /* Garante display */
+        transform: translateX(0);
+    }
+
+    /* Side Menu Content */
+    .side-menu-header {
+        padding: 2rem 1.5rem;
+        background: rgba(15, 23, 42, 0.5);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .side-menu-header h2 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .side-menu-stats {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        font-size: 0.875rem;
+    }
+
+    .side-menu-stats .stat-item {
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .side-menu-stats .stat-number {
+        font-weight: 600;
+        color: var(--text-primary);
+        background: rgba(51, 65, 85, 0.5);
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+    }
+
+    .side-menu-nav {
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        overflow-y: auto;
+    }
+
+    .side-nav-btn {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: transparent;
+        border: 1px solid transparent;
+        color: var(--text-secondary);
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 12px;
+        cursor: pointer;
+        width: 100%;
+        text-align: left;
+        transition: all 0.2s;
+    }
+
+    .side-nav-btn:hover {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+    }
+
+    .side-nav-btn.active {
+        background: rgba(59, 130, 246, 0.1);
+        color: var(--accent-blue);
+        border-color: rgba(59, 130, 246, 0.2);
+    }
+
+    .side-nav-btn .nav-icon {
+        font-size: 1.25rem;
+        width: 24px;
+        text-align: center;
+    }
+
+    /* Container Principal Mobile - Fullscreen */
+    /* Container Principal Mobile - Fullscreen */
     .kanban-container {
         padding: 0;
         margin: 0;
         width: 100%;
         max-width: 100%;
-        height: 100%;
-        margin-bottom: 100px;
-    
-    }
-
-    /* Mostrar apenas a coluna ativa */
-    .kanban-column {
-        display: none;
-        /* Esconde todas por padrão */
-        height: 100%;
-        width: 100%;
-        border-radius: 0;
-        border: none;
-        background: transparent;
-        /* Espaço extra para o botão não colar na navbar */
-       
-    }
-
-    .kanban-column.active {
-        display: flex;
-        /* Mostra apenas a ativa */
-        animation: fadeIn 0.3s ease;
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
+        margin-bottom: 0;
     }
 
     .kanban-board {
         display: block;
-        /* Remove grid para funcionar como stack de abas */
         height: 100%;
-    }
-
-    /* Barra de Navegação Mobile */
-    .mobile-nav {
-        display: flex;
-        position: fixed;
-        bottom: 0;
-        left: 0;
         width: 100%;
-        height: 100px;
-        /* Altura exata de 100px */
-        background: rgba(30, 41, 59, 0.95);
-        backdrop-filter: blur(10px);
-        border-top: 1px solid var(--border-color);
-        padding: 0;
-        /* Padding removido para centralizar via flex */
-        align-items: center;
-        /* Centralizar itens verticalmente */
-        justify-content: space-around;
-        z-index: 1000;
-        box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
     }
 
-    .nav-btn {
-        background: transparent;
-        border: none;
-        color: var(--text-secondary);
-        font-size: 0.875rem;
-        font-weight: 600;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0.5rem;
-        /* Aumentado gap para melhor visual com 100px */
-        cursor: pointer;
-        padding: 0.5rem;
-        border-radius: 8px;
-        transition: all 0.2s;
-    }
-
-    .nav-btn.active {
-        color: var(--accent-blue);
-        background: rgba(59, 130, 246, 0.1);
-    }
-
-    .nav-icon {
-        font-size: 1.25rem;
-    }
-
-    header {
+    /* Colunas Mobile */
+    .kanban-column {
         display: none;
+        height: 100vh !important;
+        width: 100%;
+        /* Top padding maior para o botão toggle nao tapar conteudo */
+        border-radius: 0;
+        border: none;
+        background: transparent;
+    }
+
+    .kanban-column.active {
+        display: flex;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .task-list {
+        /* Garante que a lista de tarefas tenha scroll adequado */
+        padding-bottom: 2rem;
     }
 }
 

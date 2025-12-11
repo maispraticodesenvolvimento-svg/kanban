@@ -85,11 +85,28 @@ function setupEventListeners() {
         }
     });
 
-    // Mobile Tabs Navigation
-    document.querySelectorAll('.nav-btn').forEach(btn => {
+    // Side Menu Navigation (Mobile)
+    // Selecionar TODOS os botões de toggle (agora um em cada coluna)
+    const menuToggles = document.querySelectorAll('.menu-toggle-btn');
+    const menuOverlay = document.getElementById('menuOverlay');
+    const sideMenu = document.getElementById('sideMenu');
+
+    function toggleMenu() {
+        sideMenu.classList.toggle('active');
+        menuOverlay.classList.toggle('active');
+    }
+
+    // Adicionar listener em cada botão de menu
+    menuToggles.forEach(btn => {
+        btn.addEventListener('click', toggleMenu);
+    });
+
+    if (menuOverlay) menuOverlay.addEventListener('click', toggleMenu);
+
+    document.querySelectorAll('.side-nav-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             // Remove active class from all buttons and columns
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.side-nav-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.kanban-column').forEach(c => c.classList.remove('active'));
 
             // Add active class to clicked button
@@ -100,6 +117,9 @@ function setupEventListeners() {
             if (targetColumn) {
                 targetColumn.classList.add('active');
             }
+
+            // Fecha o menu após selecionar
+            toggleMenu();
         });
     });
 }
@@ -359,9 +379,23 @@ function updateColumnCount(column) {
 }
 
 function updateStats() {
-    document.getElementById('stat-todo').textContent = state.tasks.todo.length;
-    document.getElementById('stat-progress').textContent = state.tasks.progress.length;
-    document.getElementById('stat-done').textContent = state.tasks.done.length;
+    // Desktop Stats
+    const statTodo = document.getElementById('stat-todo');
+    const statProgress = document.getElementById('stat-progress');
+    const statDone = document.getElementById('stat-done');
+
+    if (statTodo) statTodo.textContent = state.tasks.todo.length;
+    if (statProgress) statProgress.textContent = state.tasks.progress.length;
+    if (statDone) statDone.textContent = state.tasks.done.length;
+
+    // Mobile Side Menu Stats
+    const statTodoMobile = document.getElementById('stat-todo-mobile');
+    const statProgressMobile = document.getElementById('stat-progress-mobile');
+    const statDoneMobile = document.getElementById('stat-done-mobile');
+
+    if (statTodoMobile) statTodoMobile.textContent = state.tasks.todo.length;
+    if (statProgressMobile) statProgressMobile.textContent = state.tasks.progress.length;
+    if (statDoneMobile) statDoneMobile.textContent = state.tasks.done.length;
 }
 
 // ========================================
