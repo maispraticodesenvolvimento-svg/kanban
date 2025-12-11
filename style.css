@@ -42,7 +42,7 @@ header {
     /* Não encolhe */
     z-index: 100;
     box-shadow: var(--shadow-md);
-    display: none;
+
 }
 
 .header-content {
@@ -521,9 +521,14 @@ textarea.form-input {
 
     /* Ajuste para ocupar altura total no mobile */
     .kanban-container {
-        padding: 1rem;
-        padding-bottom: 80px;
-        /* Espaço para a navbar fixa */
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        max-width: 100%;
+        /* Usar dvh para considerar barras do navegador mobile, fallback para vh */
+        height: calc(100vh - 100px);
+        height: calc(100dvh - 100px);
+        padding-bottom: 0;
     }
 
     /* Mostrar apenas a coluna ativa */
@@ -531,6 +536,12 @@ textarea.form-input {
         display: none;
         /* Esconde todas por padrão */
         height: 100%;
+        width: 100%;
+        border-radius: 0;
+        border: none;
+        background: transparent;
+        /* Espaço extra para o botão não colar na navbar */
+        padding-bottom:110px;
     }
 
     .kanban-column.active {
@@ -552,10 +563,15 @@ textarea.form-input {
         bottom: 0;
         left: 0;
         width: 100%;
+        height: 100px;
+        /* Altura exata de 100px */
         background: rgba(30, 41, 59, 0.95);
         backdrop-filter: blur(10px);
         border-top: 1px solid var(--border-color);
-        padding: 1rem;
+        padding: 0;
+        /* Padding removido para centralizar via flex */
+        align-items: center;
+        /* Centralizar itens verticalmente */
         justify-content: space-around;
         z-index: 1000;
         box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -570,7 +586,8 @@ textarea.form-input {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 0.25rem;
+        gap: 0.5rem;
+        /* Aumentado gap para melhor visual com 100px */
         cursor: pointer;
         padding: 0.5rem;
         border-radius: 8px;
@@ -584,6 +601,10 @@ textarea.form-input {
 
     .nav-icon {
         font-size: 1.25rem;
+    }
+
+    header {
+        display: none;
     }
 }
 
