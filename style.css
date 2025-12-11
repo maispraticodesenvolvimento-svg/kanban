@@ -135,6 +135,7 @@ h1 {
     padding-bottom: 1rem;
     border-bottom: 2px solid var(--border-color);
     flex-shrink: 0;
+
 }
 
 .column-title {
@@ -707,6 +708,10 @@ textarea.form-input {
         border-radius: 0;
         border: none;
         background: transparent;
+        padding: 0px;
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-top: 10px;
     }
 
     .kanban-column.active {
@@ -717,6 +722,8 @@ textarea.form-input {
     .task-list {
         /* Garante que a lista de tarefas tenha scroll adequado */
         padding-bottom: 2rem;
+        padding-top: 5px;
+        margin-top: 0px;
     }
 
     /* Floating Action Button (FAB) for Add Task on Mobile */
@@ -738,7 +745,10 @@ textarea.form-input {
         z-index: 100;
         gap: 0;
     }
-
+.column-header {
+  margin-bottom: 0px;
+    
+}
     .add-task-btn span {
         font-size: 1.5rem;
         margin-right: 0;
