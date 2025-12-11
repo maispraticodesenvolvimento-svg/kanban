@@ -721,7 +721,7 @@ textarea.form-input {
 
     .task-list {
         /* Garante que a lista de tarefas tenha scroll adequado */
-        padding-bottom: 2rem;
+        padding-bottom: 4rem;
         padding-top: 5px;
         margin-top: 0px;
     }
@@ -729,7 +729,7 @@ textarea.form-input {
     /* Floating Action Button (FAB) for Add Task on Mobile */
     .add-task-btn {
         position: fixed;
-        bottom: 3rem;
+        bottom: 6rem;
         right: 2rem;
         width: 3.5rem;
         height: 3.5rem;
