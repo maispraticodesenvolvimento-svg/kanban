@@ -312,6 +312,12 @@ h1 {
 }
 
 /* Priority Badges */
+.priority-label {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
 .priority-badge {
     padding: 0.2rem 0.5rem;
     border-radius: 4px;
@@ -525,10 +531,9 @@ textarea.form-input {
         margin: 0;
         width: 100%;
         max-width: 100%;
-        /* Usar dvh para considerar barras do navegador mobile, fallback para vh */
-        height: calc(100vh - 100px);
-        height: calc(100dvh - 100px);
-        padding-bottom: 0;
+        height: 100%;
+        margin-bottom: 100px;
+    
     }
 
     /* Mostrar apenas a coluna ativa */
@@ -541,7 +546,7 @@ textarea.form-input {
         border: none;
         background: transparent;
         /* Espaço extra para o botão não colar na navbar */
-        padding-bottom:110px;
+       
     }
 
     .kanban-column.active {

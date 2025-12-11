@@ -311,6 +311,16 @@ function createTaskCard(task) {
     taskMeta.className = 'task-meta';
 
     // Prioridade
+    const priorityContainer = document.createElement('div');
+    priorityContainer.className = 'priority-container';
+    priorityContainer.style.display = 'flex';
+    priorityContainer.style.alignItems = 'center';
+    priorityContainer.style.gap = '4px';
+
+    const priorityLabel = document.createElement('span');
+    priorityLabel.className = 'priority-label';
+    priorityLabel.textContent = 'Prioridade:';
+
     const priorityBadge = document.createElement('span');
     const priorityMap = {
         'high': { text: 'Alta', class: 'priority-high' },
@@ -323,11 +333,14 @@ function createTaskCard(task) {
     priorityBadge.className = `priority-badge ${priorityConfig.class}`;
     priorityBadge.textContent = priorityConfig.text;
 
+    priorityContainer.appendChild(priorityLabel);
+    priorityContainer.appendChild(priorityBadge);
+
     const taskTime = document.createElement('div');
     taskTime.className = 'task-time';
     taskTime.innerHTML = `<span>🕐</span><span>${timeAgo}</span>`;
 
-    taskMeta.appendChild(priorityBadge);
+    taskMeta.appendChild(priorityContainer);
     taskMeta.appendChild(taskTime);
     card.appendChild(taskMeta);
 
