@@ -1335,6 +1335,7 @@ textarea.form-input {
 /* Task Search */
 .column-search {
     padding: 0 1rem 0.5rem;
+    width: 170px;
 }
 
 .task-search-input {

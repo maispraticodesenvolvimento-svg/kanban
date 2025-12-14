@@ -487,7 +487,7 @@ function createBoardCard(boardId, meta) {
     const isOwner = meta.owner === state.user.uid;
 
     div.innerHTML = `
-        <div style="flex:1" onclick="openBoard('${boardId}', '${meta.name}')"> <!-- Make content clickable only, or handle propagation -->
+        <div style="flex:1">
             <h3>${meta.name}</h3>
             <p>${meta.description || 'Sem descrição'}</p>
         </div>
@@ -497,9 +497,6 @@ function createBoardCard(boardId, meta) {
         </div>
     `;
 
-    // Removing the main div click listener and relying on the inner div click or handling propagation above
-    // Actually, simplest is to check target in listener, or use event.stopPropagation() on buttons
-    // I added stopPropagation inline above.
     // Adding main listener:
     div.addEventListener('click', (e) => {
         console.log("Board clicked:", boardId);
