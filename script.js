@@ -489,7 +489,7 @@ function createBoardCard(boardId, meta) {
     div.innerHTML = `
         <div style="flex:1">
             <h3>${meta.name}</h3>
-            <p>${meta.description || 'Sem descrição'}</p>
+           
         </div>
         <div class="board-meta">
             <span style="font-size:0.8rem; color:var(--text-secondary);">Criado em: ${new Date(meta.createdAt).toLocaleDateString()}</span>
