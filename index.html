@@ -4,168 +4,328 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KB SolPol - Ten Cel Corrêa Jr</title>
+    <title>Trindade</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="logo.png" type="image/png">
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <header>
-        <div class="header-content">
-            <h1>
-                KB SolPol - Ten Cel Corrêa Jr
-            </h1>
-            <div class="header-stats">
-                <div class="stat-item">
-                    <span>📝 A Fazer:</span>
-                    <span class="stat-number" id="stat-todo">0</span>
+    <!-- COMPONENT: LOADING OVERLAY -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <p>Carregando painel...</p>
+    </div>
+
+    <!-- VIEW: LOGIN -->
+    <section id="loginView" class="view-section active">
+        <div class="login-card">
+            <div class="login-header">
+                <img src="logo.png" alt="Logo" class="login-logo">
+                <h1>Trindade</h1>
+                <p>Gerenciamento de Tarefas Colaborativo</p>
+            </div>
+            <button id="googleLoginBtn" class="google-btn">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo">
+                <span>Entrar com Google</span>
+            </button>
+        </div>
+    </section>
+
+    <!-- VIEW: DASHBOARD -->
+    <section id="dashboardView" class="view-section">
+        <header class="dashboard-header">
+            <div class="header-content">
+                <div class="user-profile">
+                    <img id="userAvatar" src="" alt="Avatar" class="avatar" referrerpolicy="no-referrer">
+                    <span id="userName">Usuário</span>
                 </div>
-                <div class="stat-item">
-                    <span>🔄 Em Andamento:</span>
-                    <span class="stat-number" id="stat-progress">0</span>
-                </div>
-                <div class="stat-item">
-                    <span>✅ Concluído:</span>
-                    <span class="stat-number" id="stat-done">0</span>
-                </div>
+                <button id="logoutBtn" class="btn btn-secondary" style="max-width: 100px; ">Sair</button>
+            </div>
+        </header>
+        <main class="dashboard-container">
+            <div class="dashboard-actions">
+                <h2>Meus Painéis</h2>
+                <button id="createBoardBtn" class="btn btn-primary" style="max-width: 200px;">+ Novo <span
+                        class="spanOculto">Painel</span></button>
+            </div>
+            <div id="boardsGrid" class="boards-grid">
+                <!-- Boards will be injected here -->
+            </div>
+        </main>
+
+        <!-- Modal Criar Painel -->
+        <div class="modal" id="createBoardModal">
+            <div class="modal-content">
+                <h2 class="modal-header">Criar Novo Painel</h2>
+                <form id="createBoardForm">
+                    <div class="form-group">
+                        <label class="form-label" for="boardName">Nome do Painel</label>
+                        <input type="text" id="boardName" class="form-input" placeholder="Ex: Projeto Web" required>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" id="cancelCreateBoardBtn" class="btn btn-secondary">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Criar</button>
+                    </div>
+                </form>
             </div>
         </div>
-    </header>
 
-    <!-- Global Toggle Removed via script/css logic or just commented out. Replacing content of columns appropriately -->
+        <!-- Trash FAB (Floating Action Button) -->
+        <button id="trashFab" class="trash-fab" title="Lixeira">
+            🗑️
+            <span id="trashCount" class="trash-badge">0</span>
+        </button>
 
-    <main class="kanban-container">
-        <div class="kanban-board">
-            <!-- Coluna: A Fazer -->
-            <div class="kanban-column column-todo active">
-                <div class="column-header">
-                    <div class="header-row"
-                        style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                        <div class="column-title">
-                            📝 A Fazer
-                            <span class="column-badge" data-count="todo">0</span>
-                        </div>
-                        <button class="menu-toggle-btn">☰</button>
-                    </div>
-                </div>
-                <div class="task-list" data-column="todo"></div>
-                <button class="add-task-btn" data-column="todo">
-                    <span>+</span>
-                    Adicionar Tarefa
-                </button>
+        <!-- Trash Sidebar (Right) -->
+        <div class="menu-overlay" id="trashOverlay"></div>
+        <aside class="side-menu-right" id="trashSidebar">
+            <div class="side-menu-header">
+                <h2>Lixeira 🗑️</h2>
+                <button id="closeTrashBtn" class="btn-icon"
+                    style="font-size:1.5rem; color:var(--text-primary);">&times;</button>
             </div>
-
-            <!-- Coluna: Em Andamento -->
-            <div class="kanban-column column-progress">
-                <div class="column-header">
-                    <div class="header-row"
-                        style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                        <div class="column-title">
-                            🔄 Em Andamento
-                            <span class="column-badge" data-count="progress">0</span>
-                        </div>
-                        <button class="menu-toggle-btn">☰</button>
-                    </div>
-                </div>
-                <div class="task-list" data-column="progress"></div>
-                <button class="add-task-btn" data-column="progress">
-                    <span>+</span>
-                    Adicionar Tarefa
-                </button>
+            <div class="trash-list-container">
+                <ul id="trashList" class="trash-list">
+                    <!-- Trashed items injected here -->
+                </ul>
             </div>
+        </aside>
 
-            <!-- Coluna: Concluído -->
-            <div class="kanban-column column-done">
-                <div class="column-header">
-                    <div class="header-row"
-                        style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                        <div class="column-title">
-                            ✅ Concluído
-                            <span class="column-badge" data-count="done">0</span>
+    </section>
+
+    <!-- VIEW: BOARD (Existing Kanban) -->
+    <section id="boardView" class="view-section">
+        <header>
+            <div class="header-content">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <button id="backToDashBtn" class="btn btn-secondary" style="padding: 0.5rem;">⬅ Voltar</button>
+                    <img src="logo.png" alt="Logo" class="header-logo" style="height: 40px; width: auto;">
+                    <h1 id="boardTitleDisplay">
+                        Trindade
+                    </h1>
+                    <button id="editBoardTitleBtn" class="btn-icon"
+                        style="display:none; font-size:1.2rem; cursor:pointer;"
+                        title="Editar Nome do Painel">✏️</button>
+                </div>
+                <div class="board-actions-header" style="display:flex; gap:10px; align-items:center;">
+                    <button id="addMemberBtn" class="btn btn-secondary"
+                        style="font-size:0.8rem; background-color: var(--danger); color: white;">Participantes</button>
+                    <button id="trashBoardBtn" class="btn btn-secondary"
+                        style="font-size:0.8rem; background-color: var(--danger); color: white; display: none;">Excluir
+                        Painel</button>
+
+                    <div class="header-stats">
+                        <div class="stat-item">
+                            <span>📝 A Fazer:</span>
+                            <span class="stat-number" id="stat-todo">0</span>
                         </div>
-                        <button class="menu-toggle-btn">☰</button>
+                        <div class="stat-item">
+                            <span>🔄 Em Andamento:</span>
+                            <span class="stat-number" id="stat-progress">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>✅ Concluído:</span>
+                            <span class="stat-number" id="stat-done">0</span>
+                        </div>
                     </div>
                 </div>
-                <div class="task-list" data-column="done"></div>
-                <button class="add-task-btn" data-column="done">
-                    <span>+</span>
-                    Adicionar Tarefa
-                </button>
+            </div>
+        </header>
+
+        <!-- Global Toggle Removed via script/css logic or just commented out. Replacing content of columns appropriately -->
+
+        <main class="kanban-container">
+            <div class="kanban-board">
+                <!-- Coluna: A Fazer -->
+                <div class="kanban-column column-todo active">
+                    <div class="column-header">
+                        <div class="header-row"
+                            style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                            <div class="column-title">
+                                📝 A Fazer
+                                <span class="column-badge" data-count="todo">0</span>
+                            </div>
+                            <button class="menu-toggle-btn">☰</button>
+                        </div>
+                    </div>
+                    <div class="column-search">
+                        <input type="text" class="task-search-input" placeholder="Pesquisar..." data-column="todo">
+                    </div>
+                    <div class="task-list" data-column="todo"></div>
+                    <button class="add-task-btn" data-column="todo">
+                        <span>+</span>
+                        Adicionar Tarefa
+                    </button>
+                </div>
+
+                <!-- Coluna: Em Andamento -->
+                <div class="kanban-column column-progress">
+                    <div class="column-header">
+                        <div class="header-row"
+                            style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                            <div class="column-title">
+                                🔄 Em Andamento
+                                <span class="column-badge" data-count="progress">0</span>
+                            </div>
+                            <button class="menu-toggle-btn">☰</button>
+                        </div>
+                    </div>
+                    <div class="column-search">
+                        <input type="text" class="task-search-input" placeholder="Pesquisar..." data-column="progress">
+                    </div>
+                    <div class="task-list" data-column="progress"></div>
+                    <button class="add-task-btn" data-column="progress">
+                        <span>+</span>
+                        Adicionar Tarefa
+                    </button>
+                </div>
+
+                <!-- Coluna: Concluído -->
+                <div class="kanban-column column-done">
+                    <div class="column-header">
+                        <div class="header-row"
+                            style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                            <div class="column-title">
+                                ✅ Concluído
+                                <span class="column-badge" data-count="done">0</span>
+                            </div>
+                            <button class="menu-toggle-btn">☰</button>
+                        </div>
+                    </div>
+                    <div class="column-search">
+                        <input type="text" class="task-search-input" placeholder="Pesquisar..." data-column="done">
+                    </div>
+                    <div class="task-list" data-column="done"></div>
+                    <button class="add-task-btn" data-column="done">
+                        <span>+</span>
+                        Adicionar Tarefa
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Modal para Adicionar/Editar Tarefa -->
+        <div class="modal" id="taskModal">
+            <div class="modal-content">
+                <h2 class="modal-header" id="modalTitle">Nova Tarefa</h2>
+                <form id="taskForm">
+                    <div class="form-group">
+                        <label class="form-label" for="taskTitle">Título da Tarefa</label>
+                        <input type="text" id="taskTitle" class="form-input" placeholder="Digite o título da tarefa..."
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="taskDescription">Descrição (opcional)</label>
+                        <textarea id="taskDescription" class="form-input"
+                            placeholder="Adicione detalhes sobre a tarefa..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="taskPriority">Prioridade</label>
+                        <select id="taskPriority" class="form-input">
+                            <option value="low">🟢 Baixa</option>
+                            <option value="medium">🟡 Média</option>
+                            <option value="high">🔴 Alta</option>
+                        </select>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelBtn">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Salvar Tarefa</button>
+                    </div>
+                </form>
             </div>
         </div>
-    </main>
 
-    <!-- Modal para Adicionar/Editar Tarefa -->
-    <div class="modal" id="taskModal">
-        <div class="modal-content">
-            <h2 class="modal-header" id="modalTitle">Nova Tarefa</h2>
-            <form id="taskForm">
-                <div class="form-group">
-                    <label class="form-label" for="taskTitle">Título da Tarefa</label>
-                    <input type="text" id="taskTitle" class="form-input" placeholder="Digite o título da tarefa..."
-                        required>
+        <!-- Mobile Navigation -->
+        <!-- Mobile Menu Toggle (Global removed) -->
+
+        <!-- Side Menu Overlay -->
+        <div class="menu-overlay" id="menuOverlay"></div>
+
+        <!-- Side Menu -->
+        <aside class="side-menu" id="sideMenu">
+            <div class="side-menu-header2">
+                <h2 id="sideMenuTitle">Trindade</h2>
+                <div class="side-menu-stats">
+                    <div class="stat-item">
+                        <span>📝 A Fazer:</span>
+                        <span class="stat-number" id="stat-todo-mobile">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>🔄 Em Andamento:</span>
+                        <span class="stat-number" id="stat-progress-mobile">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>✅ Concluído:</span>
+                        <span class="stat-number" id="stat-done-mobile">0</span>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label" for="taskDescription">Descrição (opcional)</label>
-                    <textarea id="taskDescription" class="form-input"
-                        placeholder="Adicione detalhes sobre a tarefa..."></textarea>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="taskPriority">Prioridade</label>
-                    <select id="taskPriority" class="form-input">
-                        <option value="low">🟢 Baixa</option>
-                        <option value="medium">🟡 Média</option>
-                        <option value="high">🔴 Alta</option>
-                    </select>
-                </div>
-                <div class="modal-actions">
-                    <button type="button" class="btn btn-secondary" id="cancelBtn">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Salvar Tarefa</button>
-                </div>
-            </form>
+            </div>
+            <nav class="side-menu-nav">
+                <button class="side-nav-btn active" data-target="todo">
+                    <span class="nav-icon">📝</span> A Fazer
+                </button>
+                <button class="side-nav-btn" data-target="progress">
+                    <span class="nav-icon">🔄</span> Em Andamento
+                </button>
+                <button class="side-nav-btn" data-target="done">
+                    <span class="nav-icon">✅</span> Concluído
+                </button>
+                <button class="side-nav-btn" id="mobileParticipantsBtn">
+                    <span class="nav-icon">👥</span> Participantes
+                </button>
+                <button class="side-nav-btn" id="mobileTrashBoardBtn"
+                    style="background-color: var(--danger); color: white;">
+                    <span class="nav-icon">🗑️</span> Excluir Painel
+                </button>
+                <button class="side-nav-btn" id="mobileBackToDash">
+                    <span class="nav-icon">⬅</span> Sair do Quadro
+                </button>
+            </nav>
+        </aside>
+
+    </section>
+
+    <!-- Modal Gerenciar Participantes -->
+    <div class="modal" id="participantsModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header-row"
+                style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                <h2 class="modal-header" style="margin-bottom:0;">Participantes & Permissões</h2>
+                <button id="mobileCloseParticipantsBtn" class="btn-icon mobile-only"
+                    style="font-size:1.5rem; display:none;">&times;</button>
+            </div>
+
+            <div class="members-list-container">
+                <ul id="membersList" class="members-list">
+                    <!-- Members injected here -->
+                </ul>
+            </div>
+
+            <div class="invite-section">
+                <h3>Convidar Participantes</h3>
+                <form id="inviteMemberForm" style="margin-top: 1rem;">
+                    <div class="form-group" style="display: flex; gap: 10px;">
+                        <input type="email" id="inviteEmail" class="form-input" placeholder="E-mail do Google..."
+                            required>
+                        <select id="inviteRole" class="form-input" style="width: 140px;">
+                            <option value="viewer">Visualizador</option>
+                            <option value="admin">Administrador</option>
+                        </select>
+                        <button type="submit" class="btn btn-primary" style="flex: 0 0 auto;">Convidar</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" id="closeParticipantsBtn" class="btn btn-secondary">Fechar</button>
+            </div>
         </div>
     </div>
 
-    <!-- Mobile Navigation -->
-    <!-- Mobile Menu Toggle (Global removed) -->
-
-    <!-- Side Menu Overlay -->
-    <div class="menu-overlay" id="menuOverlay"></div>
-
-    <!-- Side Menu -->
-    <aside class="side-menu" id="sideMenu">
-        <div class="side-menu-header">
-            <h2>KB SolPol</h2>
-            <div class="side-menu-stats">
-                <div class="stat-item">
-                    <span>📝 A Fazer:</span>
-                    <span class="stat-number" id="stat-todo-mobile">0</span>
-                </div>
-                <div class="stat-item">
-                    <span>🔄 Em Andamento:</span>
-                    <span class="stat-number" id="stat-progress-mobile">0</span>
-                </div>
-                <div class="stat-item">
-                    <span>✅ Concluído:</span>
-                    <span class="stat-number" id="stat-done-mobile">0</span>
-                </div>
-            </div>
-        </div>
-        <nav class="side-menu-nav">
-            <button class="side-nav-btn active" data-target="todo">
-                <span class="nav-icon">�</span> A Fazer
-            </button>
-            <button class="side-nav-btn" data-target="progress">
-                <span class="nav-icon">🔄</span> Em Andamento
-            </button>
-            <button class="side-nav-btn" data-target="done">
-                <span class="nav-icon">✅</span> Concluído
-            </button>
-        </nav>
-    </aside>
-
-    <!-- Firebase SDK (Versão Compat para compatibilidade com HTML puro) -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
     <!-- Script principal -->
